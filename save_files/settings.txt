@@ -1,0 +1,4 @@
+Frequency
+24
+break length
+30
