@@ -180,8 +180,8 @@ def schedule_day():
             st = st.replace("$", f"${importance}")
             listevents += f"${importance} " + st
             importance -= 1
+    listevents += "$"
     text = subprocess.run(["TimeManagementSource.exe", "", listevents, free_sessions], capture_output=True, text=True)
-    print(text.stderr)
     return_value = text.stdout.split("-") # split into actual schedule and left events
     schedule_data = parse_schedule(return_value[0])
     if len(return_value) > 1:
@@ -193,8 +193,8 @@ def schedule_day():
         Label(f, text=header[i], font=("Helvetica", 10, "bold")).grid(row=0, column=i, padx=5, pady=5)
         # set table labels
 
-    for row in range(1, len(schedule_data)):
-        data = schedule_data[i]
+    for row in range(1, len(schedule_data) + 1):
+        data = schedule_data[row - 1]
         Label(f, text=data["hour"]).grid(row=row, column=0, padx=5, pady=5)
         Label(f, text=data["name"]).grid(row=row, column=1, padx=5, pady=5)
         Label(f, text=data["type"]).grid(row=row, column=2, padx=5, pady=5)

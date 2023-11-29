@@ -104,7 +104,7 @@ def reset_event_lst(events: str, current_events: dict):
     for key in current_events.keys():
         new_events[key] = ''
     lines = events.split("\n")
-    lines = filter(lambda x: x != '', lines)
+    lines = filter(lambda x: x != '' and "break" not in x, lines)
     prev = ''
     for line in lines:
         if line[:-1] in current_events.keys(): # dont include the ":" in the original text
