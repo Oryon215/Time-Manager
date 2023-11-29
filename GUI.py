@@ -127,8 +127,8 @@ def session_button():
                     print_lst()
                     new_session_entry.delete(0, END)
                     return
-
-        sessions.append(f"{length_session} {start_hour}")
+        if not overlaping_ranges((start_hour, end_hour), (int(components[1]), int(components[1]) + int(components[0]))):
+            sessions.append(f"{length_session} {start_hour}")
         free_sessions = "\\".join(sessions)
         new_session_entry.delete(0, END)
         print_lst()
@@ -138,7 +138,7 @@ def session_button():
 
     f.pack()
     main_frame.forget()
-# make sure last range doesnt overlap with new one
+# make sure last range doesn't overlap with new one
 
 
 # start menu frame
@@ -181,19 +181,20 @@ def schedule_day():
             listevents += f"${importance} " + st
             importance -= 1
     text = subprocess.run(["TimeManagementSource.exe", "", listevents, free_sessions], capture_output=True, text=True)
-
-    f = Frame(root, bg="light blue", height=1000, width=1000)
     print(text.stderr)
-
     return_value = text.stdout.split("-") # split into actual schedule and left events
     schedule_data = parse_schedule(return_value[0])
     if len(return_value) > 1:
-        type_events = reset_event_lst(return_value[1], type_events)
+        type_events = reset_event_lst(return_value[1], type_events) # reset events based on what has been finished
 
+    f = Frame(root, bg="light blue", height=1000, width=1000)
     header = ["Time", "Event", "Type", "Deadline", "Duration"]
-    for i, text in enumerate(header):
-        Label(f, text=text, font=("Helvetica", 10, "bold")).grid(row=0, column=i, padx=5, pady=5)
-    for row, data in enumerate(schedule_data, start=1):
+    for i in range(len(header)):
+        Label(f, text=header[i], font=("Helvetica", 10, "bold")).grid(row=0, column=i, padx=5, pady=5)
+        # set table labels
+
+    for row in range(1, len(schedule_data)):
+        data = schedule_data[i]
         Label(f, text=data["hour"]).grid(row=row, column=0, padx=5, pady=5)
         Label(f, text=data["name"]).grid(row=row, column=1, padx=5, pady=5)
         Label(f, text=data["type"]).grid(row=row, column=2, padx=5, pady=5)
@@ -204,8 +205,7 @@ def schedule_day():
     back.place(x=0, y=290)
     f.pack()
     main_frame.forget()
-# try to shorten schedule printing code
-
+# done
 
 # settings option
 def setting_button():
@@ -271,6 +271,3 @@ def main():
     with open("./save_files/sessions.txt", "w") as fd:
         fd.write(free_sessions)
     write_dictionary(type_events, r"./save_files/events.txt")
-
-
-# try to add functions for file I/O
